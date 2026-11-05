@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EmailAction.h" />
+    <ClInclude Include="ReceiveEmailAction.h" />
     <ClInclude Include="SendEmailAction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

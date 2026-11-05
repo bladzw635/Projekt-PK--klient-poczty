@@ -6,17 +6,40 @@
 #include <Poco/Exception.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 class SendEmailAction : public EmailAction {
 public:
     void execute() override {
-        //pozniej bede zmieniac tresc maila
         std::string smtpServer = "smtp.wp.pl"; 
         std::string sender = "klient_poczty_53@wp.pl";
         std::string password = "9RX9S8XCSF6ejVb";
-        std::string recipient = "bd320603@student.polsl.pl";
-        std::string subject = "Temat Maila";
-        std::string content = "Wiadomosc testowa- ulegnie samozniszczeniu za 10 sekund";
+        std::string recipient, subject;
+        std::vector<std::string> messageLines;
+
+        std::cout << "\n--- Wysylanie nowej wiadomosci ---\n";
+        std::cout << "Podaj adres odbiorcy: ";
+        std::getline(std::cin >> std::ws, recipient);
+
+        std::cout << "Podaj temat: ";
+        std::getline(std::cin, subject);
+
+        std::cout << "Wpisz tresc wiadomosci (w nowej linii wpisz 'KONIEC', aby zakonczyc i wyslac):\n";
+
+        std::string line;
+        while (std::getline(std::cin, line)) {
+            if (line == "KONIEC") {
+                break;
+            }
+            messageLines.push_back(line);
+        }
+
+        // Sklejanie zawartoœci wektora w jeden ci¹g dla MailMessage
+        std::string fullContent = "";
+        for (const auto& l : messageLines) {
+            fullContent += l + "\r\n";
+        }
+
 
         try {
             std::cout << "Tworze wiadomosc..." << std::endl;
@@ -24,7 +47,7 @@ public:
             message.setSender(sender);
             message.addRecipient(Poco::Net::MailRecipient(Poco::Net::MailRecipient::PRIMARY_RECIPIENT, recipient));
             message.setSubject(subject);
-            message.setContent(content);
+            message.setContent(fullContent);
 
             std::cout << "Lacze z serwerem SMTP: " << smtpServer << "..." << std::endl;
             Poco::Net::SMTPClientSession session(smtpServer, 587);
